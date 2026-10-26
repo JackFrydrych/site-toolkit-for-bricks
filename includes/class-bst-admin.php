@@ -8,6 +8,7 @@ final class BST_Admin {
 
     public static function boot() {
         add_action( 'admin_menu', array( __CLASS__, 'register_page' ), 20 );
+        add_action( 'admin_head', array( __CLASS__, 'print_menu_icon_css' ) );
         add_action( 'admin_menu', array( __CLASS__, 'capture_menu_entries' ), 900 );
         add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
         add_action( 'admin_post_bst_save_settings', array( __CLASS__, 'save' ) );
@@ -22,6 +23,22 @@ final class BST_Admin {
 
     public static function register_page() {
         add_menu_page( 'Site Toolkit for Bricks', 'Site Toolkit', 'manage_options', 'bst-toolkit', array( __CLASS__, 'render_page' ), BST_URL . 'assets/ew-logo-48.png', 60 );
+    }
+
+    /**
+     * The main toolkit admin stylesheet is intentionally only loaded on our
+     * settings page. Constrain the custom sidebar icon on *every* admin page,
+     * otherwise WordPress displays the full 48x48 image next to the menu label.
+     */
+    public static function print_menu_icon_css() {
+        echo '<style id="bst-menu-icon-css">'
+            . '#adminmenu #toplevel_page_bst-toolkit .wp-menu-image{overflow:hidden;}'
+            . '#adminmenu #toplevel_page_bst-toolkit .wp-menu-image img{'
+            . 'display:block!important;width:20px!important;height:20px!important;'
+            . 'max-width:20px!important;max-height:20px!important;'
+            . 'object-fit:contain!important;box-sizing:content-box!important;'
+            . 'padding:7px 0 0!important;margin:0 auto!important;}'
+            . '</style>';
     }
 
     public static function capture_menu_entries() {
