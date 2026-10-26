@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Site Toolkit for Bricks
  * Description: Dynamic Bricks data, custom fields, login branding and URL, admin menu cleanup, comments management and revision limits.
- * Version: 1.2.0
+ * Version: 1.3.0
  * Requires at least: 6.2
  * Requires PHP: 7.4
  * Author: ElegantWeb
@@ -10,6 +10,7 @@
  * Text Domain: site-toolkit-for-bricks
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Update URI: https://github.com/JackFrydrych/site-toolkit-for-bricks
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,7 +32,7 @@ if ( defined( 'BST_VERSION' ) || class_exists( 'BST_Settings', false ) ) {
 }
 
 if ( ! defined( 'BST_VERSION' ) ) {
-    define( 'BST_VERSION', '1.2.0' );
+    define( 'BST_VERSION', '1.3.0' );
     define( 'BST_FILE', __FILE__ );
     define( 'BST_PATH', plugin_dir_path( __FILE__ ) );
     define( 'BST_URL', plugin_dir_url( __FILE__ ) );
@@ -41,6 +42,10 @@ require_once BST_PATH . 'includes/class-bst-settings.php';
 require_once BST_PATH . 'includes/class-bst-bricks.php';
 require_once BST_PATH . 'includes/class-bst-modules.php';
 require_once BST_PATH . 'includes/class-bst-login-url.php';
+require_once BST_PATH . 'includes/class-bst-github-updater.php';
+
+// External GitHub releases: never confuse this plugin with WordPress.org listings.
+BST_GitHub_Updater::boot();
 
 add_action( 'plugins_loaded', static function () {
     BST_Login_URL::boot();

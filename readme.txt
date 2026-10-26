@@ -2,7 +2,7 @@
 Tags: bricks, dynamic-content, login, admin, comments
 Requires at least: 6.2
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,7 +26,7 @@ Features can be switched on or off independently. No separate ACF plugin is requ
 
 == Installation ==
 
-1. Install the ZIP through Plugins > Add New > Upload Plugin, or install from the WordPress.org plugin directory after publication.
+1. Install the GitHub release ZIP through Plugins > Add New > Upload Plugin.
 2. Activate Site Toolkit for Bricks.
 3. Open Site Toolkit in the WordPress administration menu.
 4. Enable and configure the features you need.
@@ -61,9 +61,18 @@ No. The configured limit is used when WordPress saves posts and does not immedia
 
 = Are updates delivered automatically? =
 
-After this plugin is approved and published under the exact WordPress.org slug `site-toolkit-for-bricks`, WordPress can offer the newer version through its native plugin updater. Automatic installation requires the site administrator to enable auto-updates (or use a management tool). Until the listing is published, the ZIP does not retrieve any remote updates.
+This edition gets updates exclusively from the public GitHub repository https://github.com/JackFrydrych/site-toolkit-for-bricks. It does not use WordPress.org updates. Once a newer non-prerelease GitHub Release is published with the asset `site-toolkit-for-bricks.zip`, WordPress will show the new version under Plugins. Automatic installation is optional and controlled by the site administrator.
+
+The Release ZIP must contain exactly one root directory called `site-toolkit-for-bricks`, with the main plugin file inside it. Don't attach the auto-generated GitHub source ZIP to updates. The updater intentionally refuses a release without the correctly named installable ZIP.
 
 == Changelog ==
+
+= 1.3.0 =
+* Integrated the WordPress Update URI filter with stable public GitHub Releases.
+* Update detection, native one-click/automatic installations, cached release API and plugin information dialog.
+* Requires an attached `site-toolkit-for-bricks.zip` release asset; does not accept GitHub source ZIPs.
+* No change to existing global fields, Bricks tags, login URL or user settings.
+
 
 = 1.2.0 =
 * Prepared for WordPress.org distribution with an updated, brand-compliant plugin name, directory and text domain.
