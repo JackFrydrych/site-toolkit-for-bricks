@@ -61,7 +61,7 @@ final class BST_Admin {
         }
         check_admin_referer( 'bst_save_settings', 'bst_nonce' );
         $tab = sanitize_key( wp_unslash( $_POST['bst_tab'] ?? '' ) );
-        if ( ! in_array( $tab, array( 'data', 'login', 'menu', 'comments', 'revisions' ), true ) ) {
+        if ( ! in_array( $tab, array( 'data', 'login', 'menu', 'comments', 'revisions', 'media' ), true ) ) {
             wp_die( 'Neplatná sekce.', '', array( 'response' => 400 ) );
         }
         $raw = isset( $_POST['bst'] ) && is_array( $_POST['bst'] ) ? $_POST['bst'] : array();
@@ -119,6 +119,7 @@ final class BST_Admin {
             'menu'      => array( 'label' => 'Admin menu', 'icon' => 'menu' ),
             'comments'  => array( 'label' => 'Komentáře', 'icon' => 'admin-comments' ),
             'revisions' => array( 'label' => 'Revize', 'icon' => 'backup' ),
+            'media' => array( 'label' => 'Media Optimizer', 'icon' => 'format-image' ),
         );
     }
 
@@ -184,6 +185,7 @@ final class BST_Admin {
                     case 'menu': self::section_menu( $settings ); break;
                     case 'comments': self::section_comments(); break;
                     case 'revisions': self::section_revisions( $settings ); break;
+                    case 'media': self::section_media( $settings ); break;
                 }
                 ?>
                 <div class="bst-savebar"><span><span class="dashicons dashicons-saved"></span> Změny se projeví po uložení.</span><?php submit_button( 'Uložit nastavení', 'primary bst-submit', 'submit', false ); ?></div>
@@ -203,6 +205,7 @@ final class BST_Admin {
             'menu'      => 'Skryjte nepotřebné hlavní položky v administraci WordPressu.',
             'comments'  => 'Vypněte komentáře na celém webu. Uložené komentáře můžete samostatně trvale smazat.',
             'revisions' => 'Určete maximální počet uchovávaných revizí obsahu.',
+            'media' => 'Optimalizace nových fotografií, WebP a přejmenování.',
         );
         return $texts[ $tab ];
     }
@@ -370,6 +373,33 @@ final class BST_Admin {
           <div class="bst-card-title"><h3>Limit revizí</h3><p>Maximální počet uložených revizí pro každý příspěvek nebo stránku, které revize podporují.</p></div>
           <label class="bst-control"><span class="bst-label">Počet revizí (0–200)</span><input type="number" min="0" max="200" step="1" name="bst[revisions_limit]" value="<?php echo esc_attr( $settings['revisions_limit'] ); ?>"><small>0 = revize vypnout; 1 až 200 = omezit na zadaný počet. Doporučené výchozí nastavení: 10.</small></label>
           <div class="bst-alert"><span class="dashicons dashicons-info"></span><p>Limit se použije při ukládání obsahu. Nejde o okamžité hromadné smazání historických revizí a nemění interval automatického ukládání.</p></div>
+        </section>
+        <?php
+    }
+    private static function section_media($settings) {
+        $m=$settings['media'];
+        $available=function_exists('wp_image_editor_supports') && wp_image_editor_supports(array('mime_type'=>'image/webp'));
+        ?>
+        <section class="bst-card">
+          <div class="bst-card-title"><h3>Optimalizace nových fotografií</h3><p>Po zapnutí modulu optimalizuje běžná nová nahrání. Existující obrázky zůstanou beze změny.</p></div>
+          <div class="bst-alert"><span class="dashicons dashicons-info"></span><p>WebP na tomto serveru: <strong><?php echo $available ? 'Podporováno' : 'Nepodporováno – použije se původní formát, pokud lze zmenšovat'; ?></strong>. PNG s průhledností doporučujeme ponechat beze změny.</p></div>
+          <div class="bst-form-grid">
+            <label class="bst-control"><span class="bst-label">Maximální delší strana (px)</span><input type="number" name="bst[media][max_edge]" min="800" max="4096" value="<?php echo esc_attr($m['max_edge']); ?>"><small>Výchozí 1920 px</small></label>
+            <label class="bst-control"><span class="bst-label">Maximální kratší strana (px)</span><input type="number" name="bst[media][max_short_edge]" min="480" max="4096" value="<?php echo esc_attr($m['max_short_edge']); ?>"><small>Výchozí 1080 px. Zachová proporce, bez ořezu.</small></label>
+            <label class="bst-control"><span class="bst-label">Kvalita (65–100 %)</span><input type="number" name="bst[media][quality]" min="65" max="100" value="<?php echo esc_attr($m['quality']); ?>"><small>Doporučeno 85 %. Komprese může být ztrátová.</small></label>
+          </div>
+          <label class="bst-checkbox-line"><input type="checkbox" name="bst[media][webp]" value="1" <?php checked($m['webp']); ?>> <span>Převádět JPG a vhodné PNG na WebP</span></label>
+          <label class="bst-control"><span class="bst-label">PNG obrázky</span><select name="bst[media][png_policy]">
+          <?php foreach(array('opaque'=>'Převádět pouze neprůhledné PNG (doporučeno)','skip'=>'PNG neupravovat','all'=>'Povolit i průhledné PNG') as $k=>$v): ?><option value="<?php echo esc_attr($k); ?>" <?php selected($m['png_policy'],$k); ?>><?php echo esc_html($v); ?></option><?php endforeach; ?>
+          </select></label>
+        </section>
+        <section class="bst-card">
+          <div class="bst-card-title"><h3>Automatické názvy souborů</h3><p>Z názvů typu IMG_1234.jpg vytvoří například foto-20261026-a1b2c3d4.webp. Smysluplné názvy ponechá.</p></div>
+          <label class="bst-control"><span class="bst-label">Přejmenování</span><select name="bst[media][rename_mode]">
+          <?php foreach(array('camera'=>'Pouze názvy fotoaparátů a náhodné názvy','all'=>'Přejmenovat všechny nové fotografie','original'=>'Ponechat původní název') as $k=>$v): ?><option value="<?php echo esc_attr($k); ?>" <?php selected($m['rename_mode'],$k); ?>><?php echo esc_html($v); ?></option><?php endforeach; ?>
+          </select></label>
+          <label class="bst-control"><span class="bst-label">Prefix</span><input type="text" name="bst[media][filename_prefix]" maxlength="40" value="<?php echo esc_attr($m['filename_prefix']); ?>"><small>Název není automaticky SEO popisek. ALT text je potřeba nastavit samostatně.</small></label>
+          <div class="bst-alert"><span class="dashicons dashicons-warning"></span><p>Na existující média se nic neaplikuje. GIF, SVG, PDF, AVIF a importy jsou vynechány. Pokud se konverze nezdaří, zůstane originál. Před nasazením klientům otestujte nahrání na stagingu.</p></div>
         </section>
         <?php
     }

@@ -9,6 +9,9 @@ final class BST_Modules {
         if ( BST_Settings::enabled( 'comments' ) ) {
             self::disable_comments();
         }
+        if ( BST_Settings::enabled( 'media' ) ) {
+            BST_Media_Optimizer::boot();
+        }
         if ( BST_Settings::enabled( 'revisions' ) ) {
             add_filter( 'wp_revisions_to_keep', array( __CLASS__, 'revisions_to_keep' ), 99, 2 );
         }
