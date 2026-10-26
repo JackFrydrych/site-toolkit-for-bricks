@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Site Toolkit for Bricks
  * Description: Dynamic Bricks data, custom fields, login branding and URL, admin menu cleanup, comments management and revision limits.
- * Version: 1.3.0
+ * Version: 1.3.1
  * Requires at least: 6.2
  * Requires PHP: 7.4
  * Author: ElegantWeb
@@ -32,7 +32,7 @@ if ( defined( 'BST_VERSION' ) || class_exists( 'BST_Settings', false ) ) {
 }
 
 if ( ! defined( 'BST_VERSION' ) ) {
-    define( 'BST_VERSION', '1.3.0' );
+    define( 'BST_VERSION', '1.3.1' );
     define( 'BST_FILE', __FILE__ );
     define( 'BST_PATH', plugin_dir_path( __FILE__ ) );
     define( 'BST_URL', plugin_dir_url( __FILE__ ) );
