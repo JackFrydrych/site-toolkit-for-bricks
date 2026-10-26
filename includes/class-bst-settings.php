@@ -15,6 +15,7 @@ final class BST_Settings {
                 'menu'      => false,
                 'comments'  => false,
                 'revisions' => false,
+                'media' => false,
             ),
             'data' => array(
                 'logo'    => 0,
@@ -38,6 +39,7 @@ final class BST_Settings {
             ),
             'menu_hidden'    => array(),
             'revisions_limit' => 10,
+            'media' => array('max_edge'=>1920,'max_short_edge'=>1080,'quality'=>85,'webp'=>true,'png_policy'=>'opaque','rename_mode'=>'camera','filename_prefix'=>'foto'),
         );
     }
 
@@ -92,6 +94,22 @@ final class BST_Settings {
                 break;
             case 'revisions':
                 $settings['revisions_limit'] = min( 200, absint( $raw['revisions_limit'] ?? 10 ) );
+                break;
+            case 'media':
+                $media = isset($raw['media']) && is_array($raw['media']) ? $raw['media'] : array();
+                $policy = sanitize_key($media['png_policy'] ?? 'opaque');
+                $rename = sanitize_key($media['rename_mode'] ?? 'camera');
+                $prefix = substr(sanitize_title($media['filename_prefix'] ?? 'foto'),0,40);
+                $settings['media'] = array(
+                    'max_edge'=>min(4096,max(800,absint($media['max_edge'] ?? 1920))),
+                    'max_short_edge'=>min(4096,max(480,absint($media['max_short_edge'] ?? 1080))),
+                    'quality'=>min(100,max(65,absint($media['quality'] ?? 85))),
+                    'webp'=>!empty($media['webp']),
+                    'png_policy'=>in_array($policy,array('skip','opaque','all'),true)?$policy:'opaque',
+                    'rename_mode'=>in_array($rename,array('original','camera','all'),true)?$rename:'camera',
+                    'filename_prefix'=>$prefix ?: 'foto',
+                );
+                $settings['media']['max_short_edge']=min($settings['media']['max_edge'],$settings['media']['max_short_edge']);
                 break;
             case 'comments':
                 // Only the enable switch is needed. No existing comments are removed.
