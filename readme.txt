@@ -2,7 +2,7 @@
 Tags: bricks, dynamic-content, login, admin, comments
 Requires at least: 6.2
 Requires PHP: 7.4
-Stable tag: 1.4.0
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,13 @@ This edition gets updates exclusively from the public GitHub repository https://
 The Release ZIP must contain exactly one root directory called `site-toolkit-for-bricks`, with the main plugin file inside it. Don't attach the auto-generated GitHub source ZIP to updates. The updater intentionally refuses a release without the correctly named installable ZIP.
 
 == Changelog ==
+
+= 1.4.2 =
+* Corrected sideways uploads caused by JPEG EXIF orientation during WebP conversion and resizing. Preserve original on rotation failure.
+* Updated plugin branding to supplied ElegantWeb logo.
+
+= 1.4.1 =
+* Admin logo and menu icon changed to ElegantWeb branding.
 
 = 1.4.0 =
 * Added Media Optimizer: configurable image dimensions, optional WebP conversion, PNG transparency policy and generic filename normalization.

@@ -119,6 +119,43 @@ final class BST_Media_Optimizer {
         if ( is_wp_error( $editor ) ) {
             return $upload;
         }
+        // Cameras and phones commonly store pixels sideways and declare their
+        // intended display orientation in JPEG EXIF. WordPress normally fixes
+        // this when generating attachment metadata, but this plugin converts
+        // uploads to WebP *before* that stage. Normalize orientation FIRST.
+        // Otherwise the WebP can lose the EXIF flag and display sideways.
+        if ( 'image/jpeg' === $actual ) {
+            // With no EXIF reader we cannot reliably tell which way to turn the
+            // pixels. In that case, leave the original to WordPress rather than
+            // risk creating incorrectly oriented output.
+            if ( ! is_callable( 'exif_read_data' ) ) {
+                return $upload;
+            }
+            $exif = @exif_read_data( $file ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+            $orientation = isset( $exif['Orientation'] ) ? (int) $exif['Orientation'] : 1;
+            if ( $orientation < 1 || $orientation > 8 ) {
+                return $upload;
+            }
+            $rotated = $editor->maybe_exif_rotate();
+            // Distinguish "not rotated" from success when EXIF requires it.
+            // Also cover editors unable to reset the embedded orientation.
+            if ( is_wp_error( $rotated ) || ( 1 !== $orientation && true !== $rotated ) ) {
+                return $upload;
+            }
+        }
+
+        // Rotate/mirror before calculating the dimensions or resizing: JPEGs
+        // with orientation 5, 6, 7 or 8 exchange their physical dimensions.
+        $editor_size = $editor->get_size();
+        if ( ! is_array( $editor_size ) || empty( $editor_size['width'] ) || empty( $editor_size['height'] ) ) {
+            return $upload;
+        }
+        $width = (int) $editor_size['width'];
+        $height = (int) $editor_size['height'];
+        $portrait = $height > $width;
+        $limit_width = $portrait ? $max_short : $max_edge;
+        $limit_height = $portrait ? $max_edge : $max_short;
+        $resize = $width > $limit_width || $height > $limit_height;
         if ( $resize ) {
             $result = $editor->resize( $limit_width, $limit_height, false );
             if ( is_wp_error( $result ) ) {

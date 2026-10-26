@@ -28,3 +28,8 @@
 .bst-purge-status{font-size:12px;margin:11px 0 0;line-height:1.7;color:#41638a}
 .bst-purge-status.is-error{color:#b42323}
 @media(max-width:650px){.bst-purge-grid{grid-template-columns:1fr}}
+
+/* ElegantWeb plugin branding (v1.4.2). */
+.bst-mark{display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:20px;background:#121419;box-shadow:0 12px 30px rgba(0,0,0,.10);overflow:hidden;flex:0 0 72px;}
+.bst-mark img{display:block;width:48px;height:48px;border-radius:12px;}
+#toplevel_page_bst-toolkit .wp-menu-image img{width:20px;height:20px;padding-top:7px;opacity:1;}

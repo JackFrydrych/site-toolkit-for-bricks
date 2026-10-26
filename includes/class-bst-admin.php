@@ -21,7 +21,7 @@ final class BST_Admin {
     }
 
     public static function register_page() {
-        add_menu_page( 'Site Toolkit for Bricks', 'Site Toolkit', 'manage_options', 'bst-toolkit', array( __CLASS__, 'render_page' ), 'dashicons-admin-generic', 60 );
+        add_menu_page( 'Site Toolkit for Bricks', 'Site Toolkit', 'manage_options', 'bst-toolkit', array( __CLASS__, 'render_page' ), BST_URL . 'assets/ew-logo-48.png', 60 );
     }
 
     public static function capture_menu_entries() {
@@ -135,7 +135,7 @@ final class BST_Admin {
         ?>
         <div class="wrap bst-wrap">
           <header class="bst-top">
-            <div class="bst-mark">B<span>+</span></div>
+            <div class="bst-mark"><img src="<?php echo esc_url( BST_URL . 'assets/ew-logo-48.png' ); ?>" alt="EW"></div>
             <div class="bst-heading"><span class="bst-kicker">WORDPRESS &amp; BRICKS</span><h1>Site Toolkit</h1><p>Vše potřebné pro správu klientského webu na jednom místě.</p></div>
             <span class="bst-version">verze <?php echo esc_html( BST_VERSION ); ?></span>
           </header>
